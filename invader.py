@@ -259,14 +259,11 @@ class Game(object):
         # プレイヤーを作成
         self.player = Player(self.bullets)
         # 敵を作成
-        self.set_enemy()
+        self.init_enemy()
         # トーチカを作成
-        self.set_torchka((104, 500))
-        self.set_torchka((224, 500))
-        self.set_torchka((344, 500))
-        self.set_torchka((464, 500))
+        self.init_torchka()
 
-    def set_enemy(self):
+    def init_enemy(self):
         """敵を設置"""
         start_height = (self.stage % 8 + 1) * 48
         for y in range(5):
@@ -278,11 +275,17 @@ class Game(object):
                 elif y == 3 or y == 4:
                     Enemy((x * 30 + 36, y * 30 + start_height))
 
-    def set_torchka(self, pos):
+    def const_torchka(self, pos):
         for y in range(2):
             for x in range(3):
                 if not (y == 1 and x == 1):
                     Torchka((pos[0] + x * 16, pos[1] + y * 16))
+
+    def init_torchka(self):
+        self.const_torchka((104, 500))
+        self.const_torchka((224, 500))
+        self.const_torchka((344, 500))
+        self.const_torchka((464, 500))
 
     def update_enemy(self):
         """敵全体の動き"""
@@ -308,7 +311,11 @@ class Game(object):
             self.collision_detection()
         if len(self.enemies.sprites()) == 0:
             self.stage += 1
-            self.set_enemy()
+            self.init_enemy()
+            if self.torchkas.sprites():
+                for torchka in self.torchkas.sprites():
+                    torchka.kill()
+            self.init_torchka()
 
     def draw(self):
         """画面描画"""
